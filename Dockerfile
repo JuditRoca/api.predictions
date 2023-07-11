@@ -10,6 +10,7 @@ RUN pip install -r requirements.txt
 
 # Copiar el resto del código de la app
 COPY . ./
+EXPOSE 5000
 
 # Comando para iniciar la app
 CMD ["python3", "app_model_db.py"]
