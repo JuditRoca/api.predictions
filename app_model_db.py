@@ -2,10 +2,12 @@ from flask import Flask, request, jsonify
 import os
 import pickle
 import sqlite3
+import pandas as pd
 
 
 os.chdir(os.path.dirname(__file__))
 
+# Llamamos a la web server para desplegarla
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
@@ -52,9 +54,16 @@ def new_entry():
 def train_model():
     connection = sqlite3.connect('data/Adver.db')
     cursor = connection.cursor()
+    query = ''' SELECT * FROM inversiones'''
+    result = cursor.execute(query).fetchall()
+    df = pd.DataFrame(result)
 
-   #me he vuelto loca buscando en internet y ni el chat gpt me dice algo decente xddd me rindo.
+    x = df.drop(columns = ["sales"])
+    y = df["sales"]
 
+    model = pickle.load(open('data/advertising_model','rb'))
+    model.fit(x,y)
+    pickle.dump(model, open('data/advertising_model','wb'))
 
-app.run()
+app.run(debug = True, host = '0.0.0.0', port=4000)
 
